@@ -30,6 +30,12 @@ jobs:
       - name: checkout the source.
         uses: actions/checkout@v2
 
+      - name: Update APT package lists
+        run: sudo apt-get update
+
+      - name: Fix missing packages
+        run: sudo apt-get --fix-missing -y
+
       - name: Install ffmpeg and ffprobe
         run: sudo apt install ffmpeg -y
 
