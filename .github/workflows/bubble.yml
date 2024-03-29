@@ -34,7 +34,7 @@ jobs:
         run: sudo apt-get update
 
       - name: Fix missing packages
-        run: sudo apt-get --fix-missing -y
+        run: sudo apt-get update --fix-missing -y
 
       - name: Install ffmpeg and ffprobe
         run: sudo apt install ffmpeg -y
