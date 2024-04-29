@@ -19,6 +19,9 @@ def get_image_links(search_query, max_images=10):
         soup = BeautifulSoup(response.text, "html.parser")
         div_tags = soup.find_all("div", class_="rg_meta")
 
+        print(f"Response Status Code: {response.status_code}")
+        print(f"Number of div tags found: {len(div_tags)}")
+
         for div_tag in div_tags:
             metadata = json.loads(div_tag.text)
             if "ou" in metadata:
