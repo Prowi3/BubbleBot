@@ -2,36 +2,21 @@ import discord
 import requests
 import urllib.parse
 import random
-import json
 from bs4 import BeautifulSoup
 from discord.ext import commands
 
 sent_image_links = []
 
-def get_image_links(search_query, max_images=10):
+@commands.command(name="ser", aliases=["search"])
+async def google_images_low(ctx, *, search_query: str):
     search_query_encoded = urllib.parse.quote(search_query)
     search_url = f"https://www.google.com/search?q={search_query_encoded}&tbm=isch&safe=active"
     headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"}
     response = requests.get(search_url, headers=headers)
-    image_links = []
+    soup = BeautifulSoup(response.text, "html.parser")
+    img_tags = soup.find_all("img")
 
-    if response.status_code == 200:
-        soup = BeautifulSoup(response.text, "html.parser")
-        div_tags = soup.find_all("div", class_="rg_meta")
-
-        print(f"Response Status Code: {response.status_code}")
-        print(f"Number of div tags found: {len(div_tags)}")
-
-        for div_tag in div_tags:
-            metadata = json.loads(div_tag.text)
-            if "ou" in metadata:
-                image_links.append(metadata["ou"])
-
-    return image_links[:max_images]
-
-@commands.command(name="ser", aliases=["search"])
-async def google_images_low(ctx, *, search_query: str):
-    image_links = get_image_links(search_query)
+    image_links = [img["src"] for img in img_tags if "src" in img.attrs and img["src"] not in sent_image_links and not img["src"].endswith(".gif")]
 
     if image_links:
         selected_image_link = random.choice(image_links)
